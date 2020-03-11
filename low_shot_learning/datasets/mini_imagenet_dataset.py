@@ -14,7 +14,7 @@ from PIL import Image
 import low_shot_learning.utils as utils
 
 # Set the appropriate paths of the datasets here.
-_MINI_IMAGENET_DATASET = '/datasets_local/MiniImagenet/'
+_MINI_IMAGENET_DATASET = './datasets/MiniImagenet/'
 
 _MEAN_PIXEL = [x / 255.0 for x in [120.39586422, 115.59361427, 104.54012653]]
 _STD_PIXEL = [x / 255.0 for x in [70.68188272, 68.27635443, 72.54505529]]

@@ -6,3 +6,4 @@
 *.pkl
 data/IMAGENET
 .remote-sync.json
+venv/

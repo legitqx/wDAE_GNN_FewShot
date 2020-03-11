@@ -17,6 +17,7 @@ import os
 
 from low_shot_learning.algorithms.fewshot.fewshot import FewShot
 from low_shot_learning.dataloaders.dataloader_fewshot import FewShotDataloader
+from low_shot_learning.datasets.mini_imagenet_dataset import MiniImageNet
 from low_shot_learning.datasets.imagenet_dataset import ImageNetLowShot
 from low_shot_learning import project_root
 
@@ -28,9 +29,11 @@ parser.add_argument('--checkpoint', type=int, default=0,
          'given then the latest existing checkpoint is loaded.')
 parser.add_argument('--num_workers', type=int, default=4,
     help='number of data loading workers')
-parser.add_argument('--cuda', type=bool, default=True, help='enables cuda')
+parser.add_argument('--cuda', type=bool, default=False, help='enables cuda')
 parser.add_argument('--disp_step', type=int, default=200,
     help='display step during training')
+parser.add_argument('--dataset', type=str, required=True, default='imagenet',
+    help='dataset choice between imagenet and miniimagenet')
 args_opt = parser.parse_args()
 
 
@@ -46,10 +49,15 @@ config['exp_dir'] = exp_directory # where logs, models, etc will be stored.
 print(f'Loading experiment {args_opt.config}')
 print(f'Generated logs, snapshots, and model files will be stored on {exp_directory}')
 
-
+assert args_opt.dataset in ['imagenet', 'miniimagenet']
 # Set the train dataset and the corresponding data loader.
 data_train_opt = config['data_train_opt']
-dataset_train = ImageNetLowShot(phase='train')
+
+
+if args_opt.dataset == 'imagenet':
+    dataset_train = ImageNetLowShot(phase='train')
+elif args_opt.dataset == 'miniimagenet':
+    dataset_train = MiniImageNet(phase='train')
 dloader_train = FewShotDataloader(
     dataset=dataset_train,
     nKnovel=data_train_opt['nKnovel'],
