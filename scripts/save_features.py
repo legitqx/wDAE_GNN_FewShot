@@ -19,6 +19,7 @@ import os
 from low_shot_learning.algorithms.utils.save_features import SaveFeatures
 from low_shot_learning.dataloaders.basic_dataloaders import SimpleDataloader
 from low_shot_learning.datasets.imagenet_dataset import ImageNet
+from low_shot_learning.datasets.mini_imagenet_dataset import MiniImageNet
 from low_shot_learning import project_root
 
 parser = argparse.ArgumentParser()
@@ -35,6 +36,11 @@ parser.add_argument('--batch_size', type=int, default=128)
 parser.add_argument('--save2exp', default=False, action='store_true')
 parser.add_argument('--feature_name', type=str, default='')
 parser.add_argument('--global_pooling', default=False, action='store_true')
+parser.add_argument('--dataset', type=str, required=True, default='imagenet',
+    help='dataset choice between imagenet and miniimagenet')
+parser.add_argument('--load_single_file_split', default=False, action='store_true')
+parser.add_argument('--file_split', type=str, default='category_split_train_phase_train',
+    help='file split')
 args_opt = parser.parse_args()
 
 
@@ -51,9 +57,15 @@ print(f'Generated logs, snapshots, and model files will be stored on {exp_direct
 
 if (args_opt.split != 'train') and (args_opt.split != 'val'):
     raise ValueError('Not valid split {0}'.format(args_opt.split))
-
-dataset = ImageNet(
-    split=args_opt.split, use_geometric_aug=False, use_color_aug=False)
+    
+assert args_opt.dataset in ['imagenet', 'miniimagenet']
+if args_opt.dataset == 'imagenet':
+    dataset = ImageNet(
+        split=args_opt.split, use_geometric_aug=False, use_color_aug=False)
+elif args_opt.dataset == 'miniimagenet':
+    dataset = MiniImageNet(phase=args_opt.split, file_split=args_opt.file_split,
+                           load_single_file_split=args_opt.load_single_file_split,
+                           do_not_use_random_transf=True)
 dloader = SimpleDataloader(
     dataset,
     batch_size=args_opt.batch_size,
@@ -84,8 +96,12 @@ algorithm.logger.info(f"==> Destination directory: {dst_directory}")
 if (not os.path.isdir(dst_directory)):
     os.makedirs(dst_directory)
 
-dst_filename = os.path.join(
-    dst_directory, 'ImageNet_' + args_opt.split + '.h5')
+if args_opt.dataset == 'imagenet':
+    dst_filename = os.path.join(
+        dst_directory, 'ImageNet_' + args_opt.split + '.h5')
+elif args_opt.dataset == 'miniimagenet':
+    dst_filename = os.path.join(
+        dst_directory, 'MiniImageNet_' + args_opt.file_split + '.h5')
 
 algorithm.logger.info(f"==> dst_filename: {dst_filename}")
 algorithm.logger.info(f"==> args_opt.feature_name: {args_opt.feature_name}")

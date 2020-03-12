@@ -18,6 +18,7 @@ import os
 from low_shot_learning.algorithms.fewshot.imagenet_lowshot import ImageNetLowShot
 from low_shot_learning.dataloaders.dataloader_fewshot import FewShotDataloader, LowShotDataloader
 from low_shot_learning.datasets.imagenet_dataset import ImageNetLowShotFeatures
+from low_shot_learning.datasets.mini_imagenet_dataset import MiniImageNetFeatures
 from low_shot_learning import project_root
 
 parser = argparse.ArgumentParser()
@@ -31,6 +32,8 @@ parser.add_argument('--num_workers', type=int, default=0,
 parser.add_argument('--cuda', type=bool, default=True, help='enables cuda')
 parser.add_argument('--disp_step', type=int, default=200,
     help='display step during training')
+parser.add_argument('--dataset', type=str, required=True, default='imagenet',
+    help='dataset choice between imagenet and miniimagenet')
 args_opt = parser.parse_args()
 
 exp_config_file = os.path.join(project_root, 'config', args_opt.config + '.py')
@@ -57,10 +60,15 @@ if args_opt.checkpoint != 0: # load checkpoint
 
 # Set the train dataset and the corresponding data loader.
 data_train_opt = config['data_train_opt']
-feat_dataset_train = ImageNetLowShotFeatures(
-    data_dir=data_train_opt['data_dir'],
-    image_split='train',
-    phase='train')
+if args_opt.dataset == "imagenet":
+    feat_dataset_train = ImageNetLowShotFeatures(
+        data_dir=data_train_opt['data_dir'],
+        image_split='train',
+        phase='train')
+elif args_opt.dataset == "miniimagenet":
+    feat_dataset_train = MiniImageNetFeatures(
+        data_directory=data_train_opt['data_dir'],
+        phase='train')
 dloader_train = FewShotDataloader(
     dataset=feat_dataset_train,
     nKnovel=data_train_opt['nKnovel'],
@@ -73,10 +81,23 @@ dloader_train = FewShotDataloader(
     epoch_size=data_train_opt['epoch_size'], # num of batches per epoch
 )
 
-feat_data_train = ImageNetLowShotFeatures(
-    data_dir=data_train_opt['data_dir'], image_split='train', phase='val')
-feat_data_test = ImageNetLowShotFeatures(
-    data_dir=data_train_opt['data_dir'], image_split='val', phase='val')
+if args_opt.dataset == "imagenet":
+    feat_data_train = ImageNetLowShotFeatures(
+        data_dir=data_train_opt['data_dir'],
+        image_split='train',
+        phase='val')
+elif args_opt.dataset == "miniimagenet":
+    feat_data_train = MiniImageNetFeatures(
+        data_directory=data_train_opt['data_dir'],
+        phase='trainval')
+    
+if args_opt.dataset == "imagenet":
+    feat_data_test = ImageNetLowShotFeatures(
+        data_dir=data_train_opt['data_dir'], image_split='val', phase='val')
+elif args_opt.dataset == "miniimagenet":
+    feat_data_test = MiniImageNetFeatures(
+        data_directory=data_train_opt['data_dir'],
+        phase='val')
 dloader_test = LowShotDataloader(
     feat_data_train, feat_data_test,
     nExemplars=data_train_opt['nExemplars'],

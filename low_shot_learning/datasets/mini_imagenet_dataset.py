@@ -248,19 +248,19 @@ class MiniImageNetFeatures(data.Dataset):
     def __init__(self, data_directory, phase='train'):
         file_train_categories_train_phase = os.path.join(
             data_directory,
-            'MiniImageNet_category_split_train_phase_train.json')
+            'MiniImageNet_category_split_train_phase_train.h5')
         file_train_categories_val_phase = os.path.join(
             data_directory,
-            'MiniImageNet_category_split_train_phase_val.json')
+            'MiniImageNet_category_split_train_phase_val.h5')
         file_train_categories_test_phase = os.path.join(
             data_directory,
-            'MiniImageNet_category_split_train_phase_test.json')
+            'MiniImageNet_category_split_train_phase_test.h5')
         file_val_categories_val_phase = os.path.join(
             data_directory,
-            'MiniImageNet_category_split_val.json')
+            'MiniImageNet_category_split_val.h5')
         file_test_categories_test_phase = os.path.join(
             data_directory,
-            'MiniImageNet_category_split_test.json')
+            'MiniImageNet_category_split_test.h5')
 
         self.phase = phase
         assert phase in ('train', 'val', 'test', 'trainval')

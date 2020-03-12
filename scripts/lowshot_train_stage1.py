@@ -29,7 +29,7 @@ parser.add_argument('--checkpoint', type=int, default=0,
          'given then the latest existing checkpoint is loaded.')
 parser.add_argument('--num_workers', type=int, default=4,
     help='number of data loading workers')
-parser.add_argument('--cuda', type=bool, default=False, help='enables cuda')
+parser.add_argument('--cuda', type=bool, default=True, help='enables cuda')
 parser.add_argument('--disp_step', type=int, default=200,
     help='display step during training')
 parser.add_argument('--dataset', type=str, required=True, default='imagenet',
