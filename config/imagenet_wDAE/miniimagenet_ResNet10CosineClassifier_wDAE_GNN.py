@@ -13,7 +13,7 @@ data_train_opt['nTestNovel'] = nKnovel
 data_train_opt['nTestBase'] = nKbase
 data_train_opt['batch_size'] = 4
 data_train_opt['epoch_size'] = 4000
-data_train_opt['data_dir'] = './datasets/feature_datasets/miniimagenet_ResNet10CosineClassifier'
+data_train_opt['data_dir'] = '../datasets/feature_datasets/miniimagenet_ResNet10CosineClassifier'
 
 config['data_train_opt'] = data_train_opt
 config['max_num_epochs'] = 15
@@ -28,7 +28,7 @@ networks['feature_extractor'] = {
 net_optim_paramsC = {
 	'optim_type': 'sgd', 'lr': 0.1, 'momentum':0.9, 'weight_decay': 5e-4,
 	'nesterov': True, 'LUT_lr':[(10, 0.01), (15, 0.001)]}
-pretrainedC = './experiments/miniimagenet_ResNet10CosineClassifier/classifier_net_epoch100'
+pretrainedC = '../experiments/miniimagenet_ResNet10CosineClassifier/classifier_net_epoch100'
 
 net_optionsC = {
 	'num_features': num_features,

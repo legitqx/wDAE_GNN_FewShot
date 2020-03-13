@@ -21,6 +21,27 @@ import low_shot_learning.utils as utils
 
 class Algorithm:
     def __init__(self, opt, _run=None, _log=None):
+        """
+
+        :param opt: {'best_metric': v
+                     'max_epoch':
+                     'disp_step':
+                     'networks': [
+                            network_name: {
+                                def_file
+                                opt
+                                optim_params: {
+                                    'optim_type': 'sgd', 'lr': 0.1, 'momentum':0.9, 'weight_decay': 5e-4,
+                                    'nesterov': True,
+                                    'LUT_lr':[(30, 0.1), (60, 0.01), (90, 0.001), (100, 0.0001)] }
+                                pretrained
+                                forced
+                            }
+                     ]
+                    }
+        :param _run:
+        :param _log:
+        """
         self.set_experiment_dir(pathlib.Path(opt['exp_dir']))
         self.set_log_file_handler(_log)
 
@@ -107,7 +128,7 @@ class Algorithm:
 
         return network
 
-    def load_pretrained(self, network, pretrained_path, force=False):
+    def load_pretrained(self, network, pretrained_path, force=False, is_cuda=True):
         all_possible_files = glob.glob(pretrained_path)
         if len(all_possible_files) == 0:
             raise ValueError(f'{pretrained_path}: no such file')
@@ -117,7 +138,10 @@ class Algorithm:
                          pretrained_path)
 
         assert(os.path.isfile(pretrained_path))
-        pretrained_model = torch.load(pretrained_path)
+        if is_cuda:
+            pretrained_model = torch.load(pretrained_path)
+        else:
+            pretrained_model = torch.load(pretrained_path, map_location='cpu')
         if pretrained_model['network'].keys() == network.state_dict().keys() or force:
             network.load_state_dict(pretrained_model['network'])
         else:

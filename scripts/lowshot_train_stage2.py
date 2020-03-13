@@ -29,7 +29,7 @@ parser.add_argument('--checkpoint', type=int, default=0,
          'given then the latest existing checkpoint is loaded.')
 parser.add_argument('--num_workers', type=int, default=0,
     help='number of data loading workers')
-parser.add_argument('--cuda', type=bool, default=True, help='enables cuda')
+parser.add_argument('--cuda', type=bool, default=False, help='enables cuda')
 parser.add_argument('--disp_step', type=int, default=200,
     help='display step during training')
 parser.add_argument('--dataset', type=str, required=True, default='imagenet',
@@ -89,7 +89,7 @@ if args_opt.dataset == "imagenet":
 elif args_opt.dataset == "miniimagenet":
     feat_data_train = MiniImageNetFeatures(
         data_directory=data_train_opt['data_dir'],
-        phase='trainval')
+        phase='val')
     
 if args_opt.dataset == "imagenet":
     feat_data_test = ImageNetLowShotFeatures(
@@ -104,4 +104,17 @@ dloader_test = LowShotDataloader(
     batch_size=200,
     num_workers=0)
 
+# dloader_test = FewShotDataloader(
+#     feat_data_test,
+#     nExemplars=data_train_opt['nExemplars'],
+#     batch_size=200,
+#     num_workers=0)
+#
+# dloader_base = FewShotDataloader(
+#     feat_data_train,
+#     nExemplars=data_train_opt['nExemplars'],
+#     batch_size=200,
+#     num_workers=0)
+
 algorithm.solve(dloader_train, dloader_test)
+# algorithm.evaluate(dloader_base)
