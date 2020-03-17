@@ -99,8 +99,8 @@ class ImageNet(data.Dataset):
 
         self.transform = transform_train if split=='train' else transform_test
         print('==> transform: {0}'.format(self.transform))
-        train_dir = os.path.join(data_dir, 'train')
-        val_dir = os.path.join(data_dir, 'val')
+        train_dir = os.path.join(data_dir, 'train') # compcars/train
+        val_dir = os.path.join(data_dir, 'val') # compcars/test
         split_dir = train_dir if split=='train' else val_dir
         self.data = datasets.ImageFolder(split_dir, self.transform)
         self.labels = [item[1] for item in self.data.imgs]
